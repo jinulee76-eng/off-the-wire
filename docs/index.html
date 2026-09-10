@@ -129,6 +129,7 @@
   .update-banner.state-current{background:var(--panel-2);border:1px solid var(--border);color:var(--muted);}
   .update-banner.state-error{background:var(--sig-red-soft);border:1px solid var(--sig-red);color:var(--sig-red);}
   .update-banner.state-running{background:var(--wire-soft);border:1px solid var(--wire);color:var(--ink);}
+  .update-banner.state-auto{background:var(--brass-soft);border:1px solid var(--brass);color:var(--ink);margin:12px auto 0;}
   .spin-dot{
     display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--wire);
     animation:spin-pulse 1.1s ease-in-out infinite;
@@ -261,6 +262,7 @@
 </div>
 
 <div class="update-banner" id="updateBanner" hidden></div>
+<div class="update-banner state-auto" id="autoNotice" hidden>⚙ 이 날짜는 자동 수집·번역본입니다 (사람이 선별·검수하지 않음 — 번역이 어색하거나 '보도됨' 판단이 틀릴 수 있습니다).</div>
 
 <div class="filters" role="tablist" aria-label="기사 필터">
   <span class="chip active" data-filter="all">전체</span>
@@ -274,7 +276,7 @@
   <div id="list"></div>
 </main>
 
-<footer class="appfoot">OFF THE WIRE — 연합뉴스·한국경제 대비 큐레이션 · 대화에서 요청 시 수동 갱신</footer>
+<footer class="appfoot">OFF THE WIRE — 연합뉴스·한국경제 대비 큐레이션 · 매일 자동 수집·번역 (일부 날짜는 대화 요청 시 수동 큐레이션)</footer>
 
 <div class="overlay" id="overlay">
   <div class="modal" id="modal"></div>
@@ -331,6 +333,7 @@ function render(){
   const uncovered = day.articles.filter(a=>!a.korea_coverage).length;
   tickerTotal.textContent = total;
   tickerUncovered.textContent = uncovered;
+  document.getElementById('autoNotice').hidden = (day.curation !== 'auto');
 
   let items = day.articles.slice();
   if(currentFilter==='uncovered') items = items.filter(a=>!a.korea_coverage);
