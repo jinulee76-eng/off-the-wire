@@ -1,0 +1,502 @@
+﻿<title>Off the Wire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#17203a;
+    --paper:#eef1f6;
+    --panel:#ffffff;
+    --panel-2:#f5f7fa;
+    --border:#dde2ec;
+    --muted:#5c6478;
+    --faint:#8991a3;
+
+    --wire:#21409a;
+    --wire-soft:#e4eafb;
+    --brass:#8a5c17;
+    --brass-soft:#f7ecd7;
+
+    --sig-red:#a3241c;
+    --sig-red-soft:#fbeae8;
+    --sig-green:#136b41;
+    --sig-green-soft:#e5f5ec;
+
+    --shadow: 0 1px 2px rgba(23,32,58,.04), 0 8px 24px -12px rgba(23,32,58,.16);
+    --radius: 3px;
+    --font-display:"Noto Serif KR", "Noto Serif", serif;
+    --font-body:"Noto Sans KR", "Noto Sans", -apple-system, sans-serif;
+    --font-mono:"IBM Plex Mono", "SFMono-Regular", ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#e7ebf5;
+      --paper:#0e1220;
+      --panel:#161b2b;
+      --panel-2:#1c2235;
+      --border:#2a3149;
+      --muted:#99a1b8;
+      --faint:#6e7690;
+
+      --wire:#84a0ff;
+      --wire-soft:#1c2748;
+      --brass:#e3ab5c;
+      --brass-soft:#332614;
+
+      --sig-red:#ff8b83;
+      --sig-red-soft:#3a1a1a;
+      --sig-green:#5fe0a3;
+      --sig-green-soft:#123024;
+
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 28px -12px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#e7ebf5;
+    --paper:#0e1220;
+    --panel:#161b2b;
+    --panel-2:#1c2235;
+    --border:#2a3149;
+    --muted:#99a1b8;
+    --faint:#6e7690;
+
+    --wire:#84a0ff;
+    --wire-soft:#1c2748;
+    --brass:#e3ab5c;
+    --brass-soft:#332614;
+
+    --sig-red:#ff8b83;
+    --sig-red-soft:#3a1a1a;
+    --sig-green:#5fe0a3;
+    --sig-green-soft:#123024;
+
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 28px -12px rgba(0,0,0,.55);
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);
+    line-height:1.55;font-size:15px;
+  }
+  ::selection{background:var(--wire-soft);color:var(--wire);}
+  a{color:var(--wire);}
+  button{font-family:inherit;}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important;} }
+
+  /* ---- Masthead ---- */
+  .masthead{
+    background:var(--panel);border-bottom:1px solid var(--border);
+  }
+  .masthead-inner{max-width:760px;margin:0 auto;padding:22px 20px 16px;}
+  .wordmark{
+    display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+  }
+  .wordmark h1{
+    font-family:var(--font-display);font-weight:700;font-size:1.7rem;letter-spacing:.01em;
+    margin:0;text-wrap:balance;
+  }
+  .wordmark .kicker{
+    font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--wire);background:var(--wire-soft);padding:3px 7px;border-radius:2px;
+  }
+  .dek{color:var(--muted);font-size:13px;margin:6px 0 0;max-width:56ch;}
+
+  .ticker{
+    display:flex;align-items:center;gap:16px;margin-top:16px;padding-top:14px;border-top:1px dashed var(--border);
+    font-family:var(--font-mono);font-size:11.5px;color:var(--muted);flex-wrap:wrap;
+    font-variant-numeric:tabular-nums;
+  }
+  .ticker b{color:var(--ink);font-weight:600;}
+  .ticker .dot{color:var(--faint);}
+  .ticker select{
+    font-family:var(--font-mono);font-size:11.5px;background:var(--panel-2);color:var(--ink);
+    border:1px solid var(--border);border-radius:2px;padding:5px 8px;cursor:pointer;
+  }
+  .theme-toggle{
+    margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--muted);
+    background:none;border:1px solid var(--border);border-radius:2px;padding:5px 8px;cursor:pointer;
+  }
+  .theme-toggle:hover{border-color:var(--wire);color:var(--wire);}
+  #checkUpdateBtn{margin-left:8px;}
+  #checkUpdateBtn.checking{opacity:.55;pointer-events:none;}
+
+  .update-banner{
+    max-width:760px;margin:14px auto 0;padding:11px 16px;border-radius:3px;
+    font-family:var(--font-mono);font-size:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  }
+  .update-banner.state-new{background:var(--brass-soft);border:1px solid var(--brass);color:var(--ink);}
+  .update-banner.state-current{background:var(--panel-2);border:1px solid var(--border);color:var(--muted);}
+  .update-banner.state-error{background:var(--sig-red-soft);border:1px solid var(--sig-red);color:var(--sig-red);}
+  .update-banner.state-running{background:var(--wire-soft);border:1px solid var(--wire);color:var(--ink);}
+  .spin-dot{
+    display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--wire);
+    animation:spin-pulse 1.1s ease-in-out infinite;
+  }
+  @keyframes spin-pulse{0%,100%{opacity:.3;}50%{opacity:1;}}
+  @media (prefers-reduced-motion: reduce){ .spin-dot{animation:none;opacity:1;} }
+  .update-banner button{
+    font-family:var(--font-mono);font-size:11.5px;font-weight:600;background:var(--brass);color:#fff;
+    border:none;border-radius:2px;padding:5px 10px;cursor:pointer;
+  }
+
+  /* ---- Filters ---- */
+  .filters{
+    max-width:760px;margin:0 auto;padding:16px 20px 0;display:flex;gap:8px;flex-wrap:wrap;
+  }
+  .chip{
+    font-family:var(--font-mono);font-size:11px;letter-spacing:.03em;padding:6px 11px;border-radius:2px;
+    background:var(--panel);border:1px solid var(--border);color:var(--muted);cursor:pointer;
+    transition:border-color .12s, color .12s, background .12s;
+  }
+  .chip:hover{border-color:var(--wire);color:var(--ink);}
+  .chip.active{background:var(--wire);border-color:var(--wire);color:#fff;}
+  .chip.active{color:#fff;}
+
+  /* ---- List ---- */
+  main{max-width:760px;margin:0 auto;padding:18px 20px 100px;}
+  .empty{color:var(--muted);font-size:13px;padding:60px 10px;text-align:center;font-family:var(--font-mono);}
+
+  .card{
+    background:var(--panel);border:1px solid var(--border);border-left:3px solid transparent;
+    border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;cursor:pointer;
+    box-shadow:var(--shadow);
+    transition:transform .1s ease, border-left-color .12s;
+  }
+  .card:hover{transform:translateX(2px);}
+  .card:focus-visible{outline:2px solid var(--wire);outline-offset:2px;}
+  .card.flag-uncovered{border-left-color:var(--sig-red);}
+  .card.flag-covered{border-left-color:var(--sig-green);}
+
+  .tag-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:7px;}
+  .tag{
+    font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.04em;
+    padding:2px 7px;border-radius:2px;text-transform:uppercase;
+  }
+  .tag.uncovered{background:var(--sig-red-soft);color:var(--sig-red);}
+  .tag.covered{background:var(--sig-green-soft);color:var(--sig-green);}
+  .tag.source{background:var(--panel-2);color:var(--muted);text-transform:none;font-weight:500;}
+  .tag.cat{background:var(--brass-soft);color:var(--brass);}
+
+  .card-body{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;}
+  .card h3{
+    font-family:var(--font-display);font-weight:600;font-size:15.5px;margin:0 0 3px;line-height:1.38;
+    text-wrap:balance;
+  }
+  .card .orig{margin:0;color:var(--faint);font-size:12.5px;font-style:italic;line-height:1.4;}
+  .card time{
+    font-family:var(--font-mono);font-size:10.5px;color:var(--faint);white-space:nowrap;
+    font-variant-numeric:tabular-nums;padding-top:2px;
+  }
+
+  /* ---- Modal ---- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(10,13,22,.55);display:none;
+    align-items:flex-start;justify-content:center;padding:5vh 16px;overflow-y:auto;z-index:50;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:var(--panel);border-radius:6px;max-width:800px;width:100%;
+    padding:0;position:relative;box-shadow:0 30px 60px -20px rgba(0,0,0,.4);
+  }
+  .modal-head{padding:24px 26px 18px;border-bottom:1px solid var(--border);}
+  .modal .close{
+    position:absolute;top:16px;right:16px;background:var(--panel-2);border:1px solid var(--border);
+    width:28px;height:28px;border-radius:2px;font-size:14px;cursor:pointer;color:var(--muted);
+  }
+  .modal .close:hover{color:var(--ink);border-color:var(--wire);}
+  .modal h2{
+    font-family:var(--font-display);font-size:1.3rem;font-weight:700;margin:6px 40px 6px 0;
+    text-wrap:balance;line-height:1.35;
+  }
+  .modal .meta{
+    color:var(--muted);font-size:12px;font-family:var(--font-mono);
+    display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  }
+  .modal .meta a{text-decoration:none;}
+  .modal .meta a:hover{text-decoration:underline;}
+
+  .modal-body{padding:22px 26px 26px;}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+  @media (max-width:640px){.cols{grid-template-columns:1fr;}}
+  .col{background:var(--panel);padding:16px 18px;}
+  .col.ko{background:var(--wire-soft);}
+  .col h4{
+    font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.14em;
+    color:var(--muted);margin:0 0 10px;
+  }
+  .col.ko h4{color:var(--wire);}
+  .col .ttl{font-family:var(--font-display);font-weight:600;font-size:14.5px;margin-bottom:8px;line-height:1.4;}
+  .col p{margin:0;font-size:13.5px;line-height:1.6;color:var(--ink);}
+
+  .note{
+    margin-top:18px;padding:13px 16px;background:var(--brass-soft);border-left:3px solid var(--brass);
+    border-radius:2px;font-size:12.5px;color:var(--ink);line-height:1.6;
+  }
+  .note b{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--brass);display:block;margin-bottom:4px;}
+
+  .modal-foot{margin-top:20px;text-align:right;}
+  .modal-foot a{font-family:var(--font-mono);font-size:11.5px;color:var(--wire);text-decoration:none;}
+  .modal-foot a:hover{text-decoration:underline;}
+
+  footer.appfoot{max-width:760px;margin:0 auto;padding:0 20px 40px;color:var(--faint);font-size:11px;font-family:var(--font-mono);}
+</style>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="wordmark">
+      <h1>Off the Wire</h1>
+      <span class="kicker">국내 미보도 해외뉴스</span>
+    </div>
+    <p class="dek">한국 언론이 다루지 않은 해외 경제·국제 기사를 매일 원문·번역으로. Reuters, AFP, Bloomberg, NYT, FT, Guardian, The Economist, Nikkei 등에서 선별.</p>
+    <div class="ticker">
+      <span><b id="tickerTotal">–</b> DISPATCHES</span>
+      <span class="dot">·</span>
+      <span><b id="tickerUncovered">–</b> UNCOVERED IN KR</span>
+      <select id="dateSelect" aria-label="날짜 선택"></select>
+      <button class="theme-toggle" id="checkUpdateBtn" type="button">업데이트 확인</button>
+      <button class="theme-toggle" id="themeToggle" type="button" title="테마 전환">☾/☀</button>
+    </div>
+  </div>
+</div>
+
+<div class="update-banner" id="updateBanner" hidden></div>
+
+<div class="filters" role="tablist" aria-label="기사 필터">
+  <span class="chip active" data-filter="all">전체</span>
+  <span class="chip" data-filter="uncovered">미보도</span>
+  <span class="chip" data-filter="covered">보도됨</span>
+  <span class="chip" data-filter="economy">경제</span>
+  <span class="chip" data-filter="international">국제</span>
+</div>
+
+<main>
+  <div id="list"></div>
+</main>
+
+<footer class="appfoot">OFF THE WIRE — 연합뉴스·한국경제 대비 큐레이션 · 대화에서 요청 시 수동 갱신</footer>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script type="application/json" id="archive-data">
+{"2026-09-10":{"date":"2026-09-10","generated":"2026-09-10T12:10:00+09:00","korea_baseline_sources":["연합뉴스 경제","연합뉴스 국제","한국경제"],"stats":{"total":23,"uncovered_in_korea":20,"covered_in_korea":3},"articles":[{"id":"nyt-europe-israel-settlements","source":"New York Times","source_country":"US","category":"international","url":"https://www.nytimes.com/2026/09/09/world/europe/britain-france-israel-settlements-trade.html","pubDate":"2026-09-09T12:15:45Z","title_original":"Europe Unites to Pressure Israel, Breaking With U.S.","title_ko":"유럽, 美와 갈라서서 이스라엘 압박에 뭉치다","summary_original":"Britain once followed in France\u0027s slipstream when it came to pressuring Israel. Under new leadership, it is spearheading opposition to Israeli settlements, risking American anger.","summary_ko":"예전엔 프랑스를 뒤따르던 영국이 이제는 새 지도부 아래 이스라엘 정착촌 반대 움직임을 주도하고 있다. 미국의 반발을 무릅쓴 행보라고 뉴욕타임스는 분석했다.","korea_coverage":false},{"id":"nyt-ukraine-budget-gap","source":"New York Times","source_country":"US","category":"international","url":"https://www.nytimes.com/2026/09/09/world/europe/ukraine-war-cost.html","pubDate":"2026-09-09T09:05:51Z","title_original":"Ukraine\u0027s Unexpected $27 Billion Budget Gap Rattles Europe","title_ko":"우크라이나, 예상 밖 270억달러 재정 공백에 유럽 \u0027술렁\u0027","summary_original":"An unexpected request from President Volodymyr Zelensky offered a stark reminder that the cost of the war will rise, challenging Europe.","summary_ko":"젤렌스키 대통령의 예기치 못한 추가 지원 요청이, 전쟁 비용이 계속 불어나 유럽에 부담이 되고 있다는 사실을 새삼 일깨웠다.","korea_coverage":false},{"id":"nyt-germany-bsw-afd","source":"New York Times","source_country":"US","category":"international","url":"https://www.nytimes.com/2026/09/09/world/europe/afd-bsw-sahra-wagenknecht.html","pubDate":"2026-09-09T09:06:37Z","title_original":"This Tiny Anti-Establishment Party May Put Germany\u0027s Far Right in Power","title_ko":"군소 反기득권 정당이 독일 극우의 집권 열쇠 쥐다","summary_original":"Germany\u0027s far right won a state election but fell short of a majority. Its path to power depends on a small populist group that defies traditional labels.","summary_ko":"독일 극우 정당(AfD)이 주 선거에서 승리했지만 과반에는 못 미쳤다. 집권으로 가는 길은 좌우 구분이 애매한 사라 바겐크네히트의 군소 포퓰리즘 정당(BSW) 손에 달려있다.","korea_coverage":false},{"id":"nyt-doj-nvidia-groq","source":"New York Times","source_country":"US","category":"economy","url":"https://www.nytimes.com/2026/09/09/business/nvidia-groq-antitrust.html","pubDate":"2026-09-10T00:23:24Z","title_original":"Justice Dept. Investigates Nvidia Deal With Groq","title_ko":"美 법무부, 엔비디아-Groq 거래 반독점 조사 착수","summary_original":"The Justice Department is examining whether the tech giant sought to sidestep antitrust scrutiny. Nvidia, with a market capitalization of $5.4 trillion, has effectively become Silicon Valley\u0027s central banker.","summary_ko":"미 법무부가 엔비디아의 AI 반도체 스타트업 Groq 관련 거래가 반독점 심사를 회피하려는 시도였는지 조사에 나섰다. 시가총액 5조4천억달러의 엔비디아는 사실상 실리콘밸리의 \u0027중앙은행\u0027 역할을 하고 있다는 평가다.","korea_coverage":false},{"id":"nyt-china-exports-xi-trump","source":"New York Times","source_country":"US","category":"economy","url":"https://www.nytimes.com/2026/09/08/business/china-exports-xi-trump-talks.html","pubDate":"2026-09-08T18:12:06Z","title_original":"China\u0027s Surging Exports Loom Over Trump\u0027s Talks With Xi","title_ko":"中 수출 급증, 트럼프-시진핑 회담에 그림자 드리우다","summary_original":"China\u0027s exports grew by a quarter in the month of August, weeks before its leader, Xi Jinping, is set to meet with President Trump in Washington. Some of the demand for Chinese goods globally has been driven by a voracious appetite to build out artificial intelligence capabilities.","summary_ko":"중국의 8월 수출이 전년 대비 25% 급증한 것으로 나타났다. 시진핑 주석의 워싱턴 방문·트럼프 회동을 몇 주 앞둔 시점이다. 전 세계 AI 인프라 구축 붐이 중국산 제품 수요를 상당 부분 견인한 것으로 분석된다.","korea_coverage":false},{"id":"bbc-spain-ceuta-intelligence","source":"BBC","source_country":"UK","category":"international","url":"https://www.bbc.co.uk/news/articles/ced7vj2gv82o?at_medium=RSS\u0026at_campaign=rss","pubDate":"2026-09-09T21:23:45Z","title_original":"Spanish intelligence warned of Ceuta mass crossing plans before surge","title_ko":"스페인 정보당국, 세우타 대규모 월경 사전 경고했었다","summary_original":"Declassified documents show Spanish and Moroccan authorities were alerted to social media calls for a mass migrant crossing the day before tens of thousands entered Ceuta.","summary_ko":"기밀 해제 문서에 따르면, 수만 명이 스페인령 세우타로 몰려들기 전날 이미 스페인·모로코 당국은 소셜미디어상의 대규모 월경 선동을 인지하고 있었던 것으로 드러났다.","korea_coverage":false},{"id":"bbc-merz-afd-debate","source":"BBC","source_country":"UK","category":"international","url":"https://www.bbc.co.uk/news/articles/c98679wr78do?at_medium=RSS\u0026at_campaign=rss","pubDate":"2026-09-09T13:29:33Z","title_original":"Germany\u0027s Merz attacks AfD in stormy debate after far-right election win","title_ko":"獨 메르츠 총리, 극우 AfD 선거 승리 후 격론서 정면 공격","summary_original":"Germany\u0027s chancellor clashes with AfD leader Alice Weidel, saying her migration policy amounts to \"ethnic cleansing\" for skilled workers.","summary_ko":"프리드리히 메르츠 독일 총리가 AfD 대표 알리스 바이델과 정면 충돌하며, 그의 이민정책이 숙련 이주노동자에 대한 \u0027인종청소\u0027나 다름없다고 비판했다.","korea_coverage":false},{"id":"guardian-instagram-algorithm-optout","source":"The Guardian","source_country":"UK","category":"international","url":"https://www.theguardian.com/media/2026/sep/10/instagram-boss-says-users-will-be-overwhelmed-with-brand-content-in-algorithm-free-world","pubDate":"2026-09-10T02:10:08Z","title_original":"Instagram boss says users will be \u0027overwhelmed\u0027 with brand content in algorithm-free world","title_ko":"인스타그램 CEO \"알고리즘 없애면 브랜드 광고에 이용자 \u0027압도\u0027당할 것\"","summary_original":"Adam Mosseri says platform\u0027s algorithm \u0027feels like a black box\u0027 but company trying to give users more control after Labor announces opt-out plan. The Australian government plans to require social media platforms to let users choose between an algorithm-recommended feed or a reverse chronological feed.","summary_ko":"호주 정부가 소셜미디어에 알고리즘 추천 피드와 시간순 피드 중 선택권을 주도록 요구하는 정책을 추진하는 가운데, 애덤 모세리 인스타그램 대표는 알고리즘이 \u0027블랙박스처럼 느껴진다\u0027면서도, 알고리즘을 없애면 오히려 브랜드 콘텐츠에 이용자들이 압도당하는 더 나쁜 경험을 하게 될 것이라고 주장했다.","korea_coverage":false},{"id":"guardian-dimon-burnham-banktax","source":"The Guardian","source_country":"UK","category":"economy","url":"https://www.theguardian.com/business/2026/sep/09/jp-morgan-boss-jamie-dimon-to-warn-uk-chancellor-against-bank-tax-hike","pubDate":"2026-09-09T16:42:49Z","title_original":"JP Morgan boss Jamie Dimon warns UK chancellor against bank tax hike","title_ko":"JP모건 다이먼 CEO, 英 재무장관에 \"은행세 인상 말라\" 경고","summary_original":"Wall Street CEO holds meeting with John Healey amid speculation over windfall tax on banks in October budget. The Wall Street billionaire warned higher taxes could put investment and employment in the UK at risk.","summary_ko":"제이미 다이먼 JP모건체이스 CEO가 10월 예산안에서 은행 대상 횡재세 도입이 거론되는 가운데 존 힐리 영국 재무장관을 만나, 세금 인상이 영국 내 투자와 고용을 위협할 수 있다고 경고했다.","korea_coverage":false},{"id":"guardian-uk-datacentre-jobs","source":"The Guardian","source_country":"UK","category":"economy","url":"https://www.theguardian.com/uk-news/2026/sep/09/uk-datacentres-will-create-just-25-of-jobs-predicted-by-tech-sector-analysis-finds","pubDate":"2026-09-09T06:00:00Z","title_original":"UK datacentres will create just 25% of jobs predicted by tech sector, analysis finds","title_ko":"英 데이터센터 고용, 업계 예상치의 25%에 그칠 듯","summary_original":"Facilities likely to employ 10,400 workers, compared with 40,000 in industry estimates, thinktank says.","summary_ko":"환경 싱크탱크 Verdant는 영국 내 계획된 데이터센터들이 실제로는 1만400명을 고용하는 데 그칠 것으로 분석했다. 업계 단체가 내세운 4만명 추산치의 4분의 1 수준이다.","korea_coverage":false},{"id":"ft-korea-350bn-deal","source":"Financial Times","source_country":"UK","category":"economy","url":"https://www.ft.com/content/81f74c91-7fdc-4d6b-a7e3-cd3b510cecd3","pubDate":"2026-09-10T01:29:37Z","title_original":"Will South Korea follow through on $350bn deal with Trump?","title_ko":"한국, 트럼프와의 3500억달러 투자 합의 실제로 이행할까","summary_original":"Frustration builds in Washington one year after agreement sealed.","summary_ko":"한국이 트럼프 행정부와 체결한 3500억달러 규모 대미 투자 합의를 두고, 협정 체결 1년이 지나도록 이행이 지지부진하다는 워싱턴 내 불만이 커지고 있다고 FT가 전했다.","korea_coverage":false},{"id":"ft-china-ipo-warning","source":"Financial Times","source_country":"UK","category":"economy","url":"https://www.ft.com/content/012b9a34-445d-483c-a6c6-1fbd52e60731?syn-25a6b1a6=1","pubDate":"2026-09-10T00:45:53Z","title_original":"China warns bankers not to flood IPO market","title_ko":"中 당국, 은행권에 \"IPO 시장에 물량 쏟아내지 말라\" 경고","summary_original":"Regulators say they want listings to remain priced cheaply amid push to boost investors\u0027 faith in stock markets.","summary_ko":"중국 규제당국이 증시에 대한 투자자 신뢰 회복을 추진하는 가운데, 신규 상장 물량이 한꺼번에 쏟아지지 않도록 은행권에 경고하고 나섰다. 공모가를 낮게 유지하려는 의도로 풀이된다.","korea_coverage":false},{"id":"ft-uk-citizenship-cost","source":"Financial Times","source_country":"UK","category":"international","url":"https://www.ft.com/content/0a2cf637-ea18-4a8c-a95d-ff2eb9be1035?syn-25a6b1a6=1","pubDate":"2026-09-09T23:01:05Z","title_original":"UK charges three times as much as other G7 countries for citizenship","title_ko":"英 시민권 취득비용, G7 평균의 3배","summary_original":"Think-tank says high cost combined with tougher settlement rules risks creating \u0027an expanding subclass\u0027.","summary_ko":"한 싱크탱크는 영국의 시민권 취득 비용이 다른 G7 국가 평균의 3배에 달하며, 까다로워진 영주권 규정과 맞물려 \u0027점점 커지는 하위계층\u0027을 만들어낼 위험이 있다고 경고했다.","korea_coverage":false},{"id":"ft-ai-health-lplates","source":"Financial Times","source_country":"UK","category":"economy","url":"https://www.ft.com/content/25e31948-c429-4c46-8465-72220b7e2e53?syn-25a6b1a6=1","pubDate":"2026-09-09T23:01:05Z","title_original":"New AI health tools need \u0027L-plates\u0027, says UK review","title_ko":"英 검토보고서 \"AI 의료도구, \u0027초보운전\u0027 딱지 달고 도입해야\"","summary_original":"Proposals following national consultation on health tech regulation call for live monitoring as AI moves deeper into patient care.","summary_ko":"영국의 보건기술 규제 관련 국가 자문 결과, AI가 환자 진료에 깊숙이 들어오는 만큼 신규 AI 의료도구는 마치 초보운전 표시(L-plate)를 붙이듯 실시간 모니터링 하에 도입해야 한다는 제안이 나왔다.","korea_coverage":false},{"id":"cnbc-ubs-complacency","source":"CNBC","source_country":"US","category":"economy","url":"https://www.cnbc.com/2026/09/10/ubs-ceo-sergio-ermotti-investor-complacency-piling-risks-.html","pubDate":"2026-09-10T02:52:55Z","title_original":"UBS CEO flags investor complacency as geopolitical and economic risks mount","title_ko":"UBS CEO \"지정학·경제 리스크 쌓이는데 투자자들은 안일\"","summary_original":"The UBS top boss cautioned that investors face an increasingly complicated environment given multiple headwinds.","summary_ko":"세르지오 에르모티 UBS CEO는 여러 악재가 겹치며 투자 환경이 갈수록 복잡해지고 있는데도 투자자들의 경계심이 부족하다고 경고했다.","korea_coverage":false},{"id":"cnbc-india-green-china","source":"CNBC","source_country":"US","category":"economy","url":"https://www.cnbc.com/2026/09/10/india-green-energy-china-reliance-battery.html","pubDate":"2026-09-10T00:09:06Z","title_original":"India\u0027s green push aims to boost energy security but exposes China dependency","title_ko":"인도의 \u0027그린 전환\u0027, 에너지 안보 노리다 되레 中의존만 드러내","summary_original":"India\u0027s ambition to create a self-reliant energy ecosystem by expanding its renewable energy footprint is facing a China problem.","summary_ko":"재생에너지 확대로 에너지 자립 생태계를 구축하려는 인도의 야심이, 정작 배터리 등 핵심 부품에서 중국 의존이라는 벽에 부딪히고 있다.","korea_coverage":false},{"id":"cnbc-asia-rich-money-move","source":"CNBC","source_country":"US","category":"economy","url":"https://www.cnbc.com/2026/09/09/asia-ultra-rich-investing-wealthy-chinese-migrating-maybank.html","pubDate":"2026-09-09T08:42:56Z","title_original":"Asia\u0027s ultra-rich are moving their money. Here\u0027s where it\u0027s going","title_ko":"아시아 초고액자산가들의 자금 이동, 어디로 향하나","summary_original":"Asia\u0027s ultra-rich still like gold, but they\u0027re branching out to digital assets as well, Maybank Singapore\u0027s CEO said.","summary_ko":"메이뱅크 싱가포르 CEO에 따르면 아시아 초고액자산가들은 여전히 금을 선호하면서도, 디지털 자산으로 투자처를 넓혀가고 있다.","korea_coverage":false},{"id":"cnbc-gbp-currency-star","source":"CNBC","source_country":"US","category":"economy","url":"https://www.cnbc.com/2026/09/09/fx-currencies-interest-rate-hikes.html","pubDate":"2026-09-09T05:32:16Z","title_original":"G10\u0027s \u0027surprise\u0027 currency star could stumble as peers hike interest rates","title_ko":"G10 \u0027깜짝 강세\u0027 파운드화, 주변국 금리인상 러시에 흔들릴 수도","summary_original":"The British pound has benefited from a resilient economy and rate hike expectations, but the BOE looks increasingly dovish while a crucial budget lies ahead.","summary_ko":"영국 파운드화는 탄탄한 경기와 금리인상 기대감 덕에 강세를 보여왔지만, 정작 영란은행(BOE)은 갈수록 비둘기파적 태도를 보이고 있고 중요한 예산안 발표도 앞두고 있어 흔들릴 가능성이 제기된다.","korea_coverage":false},{"id":"economist-china-bank-capital","source":"The Economist","source_country":"UK","category":"economy","url":"https://www.economist.com/finance-and-economics/2026/09/08/chinas-54bn-capital-boost-for-banks-falls-far-short","pubDate":"2026-09-08T16:18:35Z","title_original":"China\u0027s $54bn capital boost for banks falls far short","title_ko":"中 은행권에 540억달러 자본 수혈, 그래도 \u0027역부족\u0027","summary_original":"Old problems bedevil balance-sheets and hold back lending","summary_ko":"중국이 은행권에 540억달러 규모 자본을 투입했지만, 고질적인 부실 문제가 대차대조표를 계속 짓눌러 대출 확대를 가로막고 있다고 이코노미스트는 분석했다.","korea_coverage":false},{"id":"economist-nuclear-terror-fading","source":"The Economist","source_country":"UK","category":"international","url":"https://www.economist.com/international/2026/09/08/world-leaders-are-losing-their-terror-of-nuclear-war","pubDate":"2026-09-08T17:03:16Z","title_original":"World leaders are losing their terror of nuclear war","title_ko":"핵전쟁에 대한 세계 지도자들의 공포감, 옅어지고 있다","summary_original":"Putin, Trump and Xi control the most powerful arsenals on earth. They should take nuclear risks more seriously","summary_ko":"지구상 가장 강력한 핵무기를 통제하는 푸틴·트럼프·시진핑이 정작 핵 리스크를 예전만큼 심각하게 받아들이지 않고 있다고 이코노미스트는 경고한다.","korea_coverage":false},{"id":"apple-iphone-duo-covered","source":"BBC / Guardian / FT 등","source_country":"major","category":"economy","url":"https://www.theguardian.com/technology/2026/sep/08/apple-new-folding-iphone","pubDate":"2026-09-09T18:45:46Z","title_original":"Apple unveils folding iPhone Duo as new CEO takes center stage","title_ko":"애플, 첫 폴더블 \u0027아이폰 듀오\u0027 공개…신임 CEO 첫 시험대","summary_original":"The passport-size iPhone Duo serves as the first big test for John Ternus, who took over for Tim Cook last week. It costs $1,999, with Pro and Max models $100 more than last year.","summary_ko":"애플이 여권 크기로 접히는 첫 폴더블폰 \u0027아이폰 듀오\u0027를 공개했다. 팀 쿡의 뒤를 이어 취임한 존 터너스 신임 CEO의 첫 시험대다. 가격은 1999달러이며 Pro·Max 모델은 작년보다 100달러 비싸졌다.","korea_coverage":false,"korea_note":"한국경제·연합뉴스 모두 폴더블 아이폰 공개 소식과 가격을 상세히 보도했다. 다만 해외 언론이 강조한 \u0027신임 CEO 존 터너스의 첫 시험대\u0027라는 경영 승계 맥락, 원가 압박으로 인한 가격 인상 배경 분석은 국내 보도에서 비중이 작았다."},{"id":"oil-100-iran-war-covered","source":"NYT / BBC / FT 등","source_country":"major","category":"economy","url":"https://www.ft.com/content/c8921e49-1d06-4d27-ab38-7a1d8e3d43fe?syn-25a6b1a6=1","pubDate":"2026-09-09T19:19:03Z","title_original":"Oil hits $100 for first time since July","title_ko":"국제유가, 7월 이후 처음으로 배럴당 100달러 돌파","summary_original":"Brent crude advances as escalation in US-Iran war feeds fears of renewed global supply crunch. Crude has risen 40 percent since the start of the war in Iran.","summary_ko":"미국-이란 전쟁이 격화되며 글로벌 공급 부족 우려가 커지자 브렌트유가 7월 이후 처음으로 배럴당 100달러를 돌파했다. 이란 전쟁 발발 이후 원유값은 40% 올랐다.","korea_coverage":true,"korea_note":"연합뉴스·한국경제 모두 유가 100달러 돌파와 국내 증시·물가 영향을 비중있게 보도했다. 다만 NYT가 짚은 \u0027디젤·가솔린 가격 동반 급등에 따른 미국 소비자 체감 물가\u0027 등 세부 파급 분석은 국내 보도에서 상대적으로 덜 다뤄졌다."},{"id":"anthropic-ai-extinction-covered","source":"BBC / Guardian / CNBC 등","source_country":"major","category":"economy","url":"https://www.bbc.co.uk/news/articles/ckgwy1k42w4o?at_medium=RSS\u0026at_campaign=rss","pubDate":"2026-09-09T15:34:09Z","title_original":"Anthropic researcher believes more than 10% chance AI \u0027could kill all humans\u0027","title_ko":"앤트로픽 연구원 \"AI가 인류 전체를 죽일 확률 10% 넘어\" 경고","summary_original":"It is the latest in a series of increasing warnings about the safety threat posed by artificial intelligence. The researcher resigned in protest, saying Anthropic and OpenAI were mishandling the threat.","summary_ko":"앤트로픽의 한 연구원이 AI가 인류를 멸종시킬 확률이 10%를 넘는다고 경고하며 회사에 항의 사직했다. AI 안전성에 대한 경고가 잇따르는 가운데 나온 최신 사례다.","korea_coverage":true,"korea_note":"연합뉴스·한국경제 모두 해당 연구원의 사퇴와 \u0027인류 멸종\u0027 경고 발언을 보도했다. 다만 미 상원의원(테드 크루즈 등)들의 즉각적인 반응, OpenAI 출신 이사의 별도 경고(FT 보도) 등 정치권·업계 파장에 대한 후속 보도는 국내에서 상대적으로 적었다."}]}}
+</script>
+<script>
+const archive = JSON.parse(document.getElementById('archive-data').textContent);
+const dates = Object.keys(archive).sort().reverse();
+const dateSelect = document.getElementById('dateSelect');
+const list = document.getElementById('list');
+const overlay = document.getElementById('overlay');
+const modal = document.getElementById('modal');
+const tickerTotal = document.getElementById('tickerTotal');
+const tickerUncovered = document.getElementById('tickerUncovered');
+
+let currentFilter = 'all';
+let currentDate = dates[0];
+
+const loadedLatestDate = dates[0] || null;
+const loadedGenerated = (dates[0] && archive[dates[0]]) ? archive[dates[0]].generated : null;
+
+function monthGroups(){
+  const groups = {};
+  dates.forEach(d=>{ const ym = d.slice(0,7); (groups[ym] = groups[ym]||[]).push(d); });
+  return groups;
+}
+
+function fillDateSelect(){
+  dateSelect.innerHTML = '';
+  const groups = monthGroups();
+  Object.keys(groups).sort().reverse().forEach(ym=>{
+    const og = document.createElement('optgroup');
+    og.label = ym.replace('-', '년 ') + '월';
+    groups[ym].forEach(d=>{
+      const opt = document.createElement('option');
+      opt.value = d;
+      const dd = new Date(d+'T00:00:00');
+      const wd = ['일','월','화','수','목','금','토'][dd.getDay()];
+      opt.textContent = `${d} (${wd})`;
+      og.appendChild(opt);
+    });
+    dateSelect.appendChild(og);
+  });
+  dateSelect.value = currentDate;
+}
+
+function render(){
+  const day = archive[currentDate];
+  if(!day){ list.innerHTML = '<div class="empty">해당 날짜의 데이터가 없습니다.</div>'; return; }
+  const total = day.articles.length;
+  const uncovered = day.articles.filter(a=>!a.korea_coverage).length;
+  tickerTotal.textContent = total;
+  tickerUncovered.textContent = uncovered;
+
+  let items = day.articles.slice();
+  if(currentFilter==='uncovered') items = items.filter(a=>!a.korea_coverage);
+  else if(currentFilter==='covered') items = items.filter(a=>a.korea_coverage);
+  else if(currentFilter==='economy'||currentFilter==='international') items = items.filter(a=>a.category===currentFilter);
+
+  if(!items.length){ list.innerHTML = '<div class="empty">조건에 맞는 기사가 없습니다.</div>'; return; }
+
+  list.innerHTML = items.map(a=>{
+    const idx = day.articles.indexOf(a);
+    const flagClass = a.korea_coverage ? 'flag-covered' : 'flag-uncovered';
+    const covTag = a.korea_coverage
+      ? `<span class="tag covered">보도됨</span>`
+      : `<span class="tag uncovered">미보도</span>`;
+    const catLabel = a.category==='economy' ? '경제' : a.category==='international' ? '국제' : a.category;
+    const time = a.pubDate ? new Date(a.pubDate).toLocaleString('ko-KR',{hour:'2-digit',minute:'2-digit',month:'2-digit',day:'2-digit'}) : '';
+    return `<div class="card ${flagClass}" data-idx="${idx}" role="button" tabindex="0" aria-label="${escapeHtml(a.title_ko)} 상세 보기">
+      <div class="tag-row">
+        ${covTag}
+        <span class="tag source">${escapeHtml(a.source)}</span>
+        <span class="tag cat">${catLabel}</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <h3>${escapeHtml(a.title_ko)}</h3>
+          <p class="orig">${escapeHtml(a.title_original)}</p>
+        </div>
+        <time>${time}</time>
+      </div>
+    </div>`;
+  }).join('');
+
+  [...list.querySelectorAll('.card')].forEach(el=>{
+    const open = ()=> openModal(day.articles[+el.dataset.idx]);
+    el.addEventListener('click', open);
+    el.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); open(); } });
+  });
+}
+
+function openModal(a){
+  const covTag = a.korea_coverage
+    ? `<span class="tag covered">보도됨</span>`
+    : `<span class="tag uncovered">미보도</span>`;
+  const catLabel = a.category==='economy' ? '경제' : a.category==='international' ? '국제' : a.category;
+  const time = a.pubDate ? new Date(a.pubDate).toLocaleString('ko-KR') : '';
+  modal.innerHTML = `
+    <button class="close" id="closeBtn" aria-label="닫기">✕</button>
+    <div class="modal-head">
+      <div class="tag-row">${covTag}<span class="tag source">${escapeHtml(a.source)}</span><span class="tag cat">${catLabel}</span></div>
+      <h2>${escapeHtml(a.title_ko)}</h2>
+      <div class="meta"><span>${time}</span><span>·</span><a href="${a.url}" target="_blank" rel="noopener">원문 링크 ↗</a></div>
+    </div>
+    <div class="modal-body">
+      <div class="cols">
+        <div class="col en">
+          <h4>Original</h4>
+          <div class="ttl">${escapeHtml(a.title_original)}</div>
+          <p>${escapeHtml(a.summary_original || '(요약 정보 없음)')}</p>
+        </div>
+        <div class="col ko">
+          <h4>한국어 번역</h4>
+          <div class="ttl">${escapeHtml(a.title_ko)}</div>
+          <p>${escapeHtml(a.summary_ko || '(번역 없음)')}</p>
+        </div>
+      </div>
+      ${a.korea_note ? `<div class="note"><b>한국 언론 비교</b>${escapeHtml(a.korea_note)}</div>` : ''}
+      <div class="modal-foot"><a href="${a.url}" target="_blank" rel="noopener">${escapeHtml(a.source)} 원문 기사 보기 →</a></div>
+    </div>
+  `;
+  overlay.classList.add('open');
+  document.getElementById('closeBtn').addEventListener('click', closeModal);
+}
+function closeModal(){ overlay.classList.remove('open'); }
+overlay.addEventListener('click', e=>{ if(e.target===overlay) closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+function escapeHtml(s){
+  if(s==null) return '';
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+dateSelect.addEventListener('change', ()=>{ currentDate = dateSelect.value; render(); });
+[...document.querySelectorAll('.chip')].forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    currentFilter = chip.dataset.filter;
+    render();
+  });
+});
+
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', ()=>{
+  const root = document.documentElement;
+  const cur = root.getAttribute('data-theme');
+  const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  let next;
+  if(!cur){ next = sysDark ? 'light' : 'dark'; }
+  else if(cur==='dark'){ next = 'light'; }
+  else { next = 'dark'; }
+  root.setAttribute('data-theme', next);
+});
+
+if(dates.length){
+  fillDateSelect();
+  render();
+} else {
+  list.innerHTML = '<div class="empty">아직 수집된 기사가 없습니다.</div>';
+}
+
+const checkUpdateBtn = document.getElementById('checkUpdateBtn');
+const updateBanner = document.getElementById('updateBanner');
+
+function showBanner(state, html){
+  updateBanner.className = 'update-banner state-' + state;
+  updateBanner.innerHTML = html;
+  updateBanner.hidden = false;
+}
+
+async function fetchJsonSafe(url){
+  try{
+    const res = await fetch(url, {cache: 'no-store'});
+    if(!res.ok) return null;
+    return await res.json();
+  } catch(e){ return null; }
+}
+
+checkUpdateBtn.addEventListener('click', async ()=>{
+  checkUpdateBtn.classList.add('checking');
+  checkUpdateBtn.textContent = '확인 중…';
+  try{
+    const [m, s] = await Promise.all([
+      fetchJsonSafe('manifest.json'),
+      fetchJsonSafe('refresh_status.json'),
+    ]);
+    if(!m) throw new Error('manifest fetch failed');
+
+    // Compare against when the CURRENT data was actually curated (m.generated),
+    // not when the HTML file was last rebuilt (m.builtAt can change without
+    // new data - e.g. a manual rebuild after fixing something) - otherwise a
+    // failure that happened before the most recent rebuild would be masked.
+    const failedSinceLastBuild = s && s.status === 'idle' && s.lastResult === 'failed' && s.finishedAt &&
+      (!m.generated || new Date(s.finishedAt) > new Date(m.generated));
+
+    if(s && s.status === 'running'){
+      const since = s.startedAt ? new Date(s.startedAt).toLocaleString('ko-KR',{hour:'2-digit',minute:'2-digit'}) : '';
+      showBanner('running', `<span class="spin-dot"></span> 진행중입니다 (${escapeHtml(since)}부터 기사 수집·번역 중) — 보통 15분 정도 걸려요. 잠시 후 다시 확인해 주세요.`);
+    } else if(failedSinceLastBuild){
+      const since = new Date(s.finishedAt).toLocaleString('ko-KR',{hour:'2-digit',minute:'2-digit',month:'2-digit',day:'2-digit'});
+      showBanner('error', `⚠ 최근 자동 갱신 시도가 실패했습니다 (${escapeHtml(since)}) — 아직 ${escapeHtml(m.latestDate)} 자료입니다. logs 폴더에서 원인을 확인해 주세요.`);
+    } else {
+      const isNew = (m.latestDate !== loadedLatestDate) || (m.generated !== loadedGenerated);
+      if(isNew){
+        showBanner('new', `🆕 새 기사가 있습니다 (${escapeHtml(m.latestDate)} · ${m.totalArticles}건) — 지금 이 페이지는 이전 버전을 보고 있어요. <button id="reloadBtn">새로고침</button>`);
+        document.getElementById('reloadBtn').addEventListener('click', ()=> location.reload());
+      } else {
+        const t = m.generated ? new Date(m.generated).toLocaleString('ko-KR',{hour:'2-digit',minute:'2-digit',month:'2-digit',day:'2-digit'}) : '';
+        showBanner('current', `✓ 최신 상태입니다 (${escapeHtml(m.latestDate)} ${t} 기준 갱신)`);
+        setTimeout(()=>{ updateBanner.hidden = true; }, 4000);
+      }
+    }
+  } catch(err){
+    showBanner('error', '업데이트 확인에 실패했습니다. 서버가 켜져 있는지 확인해 주세요.');
+  } finally {
+    checkUpdateBtn.classList.remove('checking');
+    checkUpdateBtn.textContent = '업데이트 확인';
+  }
+});
+</script>
